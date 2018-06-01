@@ -12,6 +12,7 @@ const {
 } = require('actions-on-google');
 
 const geoLocationApikey = 'AIzaSyDEfZBPpxnnX4mLiAmmXV0Yg1xBf8WkghI';
+const ryanairApiEndpoint = 'https://apigateway.ryanair.com/pub/v1/';
 const ryanairApikey = 'I8Q6famX1tQw9AF1V6RG07CXQFAH3iBa';
 
 const flightQueryParams = {
@@ -85,14 +86,14 @@ const getAirportDataByCity = async (city) => {
   const cityLocation = locationData.results[0].geometry.location;
 
   const airportLocationResp = await fetch(
-    `https://apigateway.ryanair.com/pub/v1/geolocation/3/nearbyAirports?latitude=${cityLocation.lat}&longitude=${cityLocation.lng}&limit=1&apikey=${ryanairApikey}`
+    `${ryanairApiEndpoint}geolocation/3/nearbyAirports?latitude=${cityLocation.lat}&longitude=${cityLocation.lng}&limit=1&apikey=${ryanairApikey}`
   );
   const airportData = await airportLocationResp.json();
   return airportData;
 };
 
 const findFlights = async (params) => {
-  let link = `https://apigateway.ryanair.com/pub/v1/farefinder/3/oneWayFares`;
+  let link = `${ryanairApiEndpoint}farefinder/3/oneWayFares`;
   link += `?departureAirportIataCode=${params.departureAirportIataCode}`;
   link += `&arrivalAirportIataCode=${params.arrivalAirportIataCode}`;
   link += `&outboundDepartureDateFrom=${params.outboundDepartureDateFrom}`;
