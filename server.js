@@ -12,8 +12,8 @@ const {
 } = require('actions-on-google');
 
 const geoLocationApikey = 'AIzaSyDEfZBPpxnnX4mLiAmmXV0Yg1xBf8WkghI';
-const ryanairApiEndpoint = 'https://apigateway.ryanair.com/pub/v1/';
 const ryanairApikey = 'I8Q6famX1tQw9AF1V6RG07CXQFAH3iBa';
+const ryanairApiEndpoint = 'https://apigateway.ryanair.com/pub/v1/';
 
 const flightQueryParams = {
   departureAirportIataCode: '',
@@ -51,6 +51,11 @@ app.intent('Desired Date Range', async (conv, { fromDate, toDate }) => {
   const flightsData = await findFlights(flightQueryParams);
 
   if (flightsData.total) {
+    let discoverFaresUrl = `https://www.ryanair.com/gb/en/booking/home` +
+      `/${flightQueryParams.departureAirportIataCode}` +
+      `/${flightQueryParams.arrivalAirportIataCode}` +
+      `/${flightQueryParams.outboundDepartureDateFrom}`;
+
     conv.close(new SimpleResponse({ 
       text: `${flightsData.total} ${flightsData.total > 1 ? 'fares' : 'fare'} found!`,
       speech: `I found ${flightsData.total} ${flightsData.total > 1 ? 'fares' : 'fare'} for you`,
@@ -63,8 +68,8 @@ app.intent('Desired Date Range', async (conv, { fromDate, toDate }) => {
         alt: 'RyanAir Logo'
       }),
       buttons: new Button({
-        title: 'Discover',
-        url: 'https://www.ryanair.com/gb/en/',
+        title: 'Discover Fares',
+        url: discoverFaresUrl,
       }),
     }));
   } else {
@@ -86,20 +91,24 @@ const getAirportDataByCity = async (city) => {
   const cityLocation = locationData.results[0].geometry.location;
 
   const airportLocationResp = await fetch(
-    `${ryanairApiEndpoint}geolocation/3/nearbyAirports?latitude=${cityLocation.lat}&longitude=${cityLocation.lng}&limit=1&apikey=${ryanairApikey}`
+    `${ryanairApiEndpoint}geolocation/3/nearbyAirports` +
+    `?latitude=${cityLocation.lat}` +
+    `&longitude=${cityLocation.lng}` +
+    `&limit=1&apikey=${ryanairApikey}`
   );
   const airportData = await airportLocationResp.json();
   return airportData;
 };
 
 const findFlights = async (params) => {
-  let link = `${ryanairApiEndpoint}farefinder/3/oneWayFares`;
-  link += `?departureAirportIataCode=${params.departureAirportIataCode}`;
-  link += `&arrivalAirportIataCode=${params.arrivalAirportIataCode}`;
-  link += `&outboundDepartureDateFrom=${params.outboundDepartureDateFrom}`;
-  link += `&outboundDepartureDateTo=${params.outboundDepartureDateTo}`;
-  link += `&priceValueTo=${params.priceValueTo}`;
-  link += `&currency=${params.currency}`;
+  let link = `${ryanairApiEndpoint}farefinder/3/oneWayFares` +
+  `?departureAirportIataCode=${params.departureAirportIataCode}` +
+  `&arrivalAirportIataCode=${params.arrivalAirportIataCode}` +
+  `&outboundDepartureDateFrom=${params.outboundDepartureDateFrom}` +
+  `&outboundDepartureDateTo=${params.outboundDepartureDateTo}` +
+  `&priceValueTo=${params.priceValueTo}` +
+  `&currency=${params.currency}`;
+
   const response = await fetch(link + `&apikey=${ryanairApikey}`);
   const data = await response.json();
   return data;
