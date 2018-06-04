@@ -59,12 +59,12 @@ app.intent('Desired Date Range', async (conv, { fromDate, toDate }) => {
       `/${flightQueryParams.outboundDepartureDateFrom}`;
 
     conv.close(new SimpleResponse({ 
-      text: `${flightsData.total} ${flightsData.total > 1 ? 'fares' : 'fare'} found!`,
-      speech: `I found ${flightsData.total} ${flightsData.total > 1 ? 'fares' : 'fare'} for you`,
+      text: `The cheapest fare found!`,
+      speech: `The cheapest fare is ${flightsData.fares[0].summary.price.value} ${flightsData.fares[0].summary.price.currencySymbol}`,
     }));
 
     conv.close(new BasicCard({
-      title: `Check your flight!`,
+      title: `The cheapest fare is ${flightsData.fares[0].summary.price.value} ${flightsData.fares[0].summary.price.currencySymbol}`,
       image: new Image({
         url: 'https://cdn.jetphotos.com/400/1/17578_1295567460.jpg',
         alt: 'RyanAir Logo'
