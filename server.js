@@ -11,8 +11,10 @@ const {
   Suggestions
 } = require('actions-on-google');
 
-const geoLocationApikey = 'AIzaSyDEfZBPpxnnX4mLiAmmXV0Yg1xBf8WkghI';
-const ryanairApikey = 'I8Q6famX1tQw9AF1V6RG07CXQFAH3iBa';
+require('dotenv').config();
+
+const geoLocationApikey = process.env.GEOLOCATION_API_KEY;
+const ryanairApikey = process.env.RYANAIR_API_KEY;
 const ryanairApiEndpoint = 'https://apigateway.ryanair.com/pub/v1/';
 
 const flightQueryParams = {
